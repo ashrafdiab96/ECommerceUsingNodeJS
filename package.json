@@ -1,0 +1,38 @@
+{
+  "name": "ecommerce",
+  "version": "1.0.0",
+  "description": "An ecommperce API using node.js express.js and mongoDB",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashrafdiab96/ECommerceUsingNodeJS.git"
+  },
+  "keywords": [
+    "ecommerce",
+    "node.js",
+    "express.js",
+    "mongoDB",
+    "NoSql",
+    "ReactJS",
+    "MERN",
+    "javascript"
+  ],
+  "author": "Ashraf Diab",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ashrafdiab96/ECommerceUsingNodeJS/issues"
+  },
+  "homepage": "https://github.com/ashrafdiab96/ECommerceUsingNodeJS#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.8.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.17"
+  }
+}
