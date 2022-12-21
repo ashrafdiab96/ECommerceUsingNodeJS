@@ -1,3 +1,10 @@
+/**
+ * @file database.js
+ * @desc handel database connection
+ * @version 1.0.0
+ * @author AshrafDiab
+ */
+
 const mongoose = require('mongoose');
 
 /**
@@ -8,9 +15,6 @@ const mongoose = require('mongoose');
 const dbConnection = () => {
     mongoose.connect(process.env.DB_URL).then((conn) => {
         console.log(`Database connected: ${conn.connection.host}`);
-    }).catch((error) => {
-        console.error(`Faild to connect with database: ${error}`);
-        process.exit(1);
     });
 }
 
