@@ -1,3 +1,10 @@
+/**
+ * @file handlersFactory.js
+ * @desc handlers factory for shared methods
+ * @version 1.0.0
+ * @author AshrafDiab
+ */
+
 const asyncHandler = require('express-async-handler');
 const ApiError = require('../utils/ApiError');
 const ApiFeatures = require('../utils/ApiFeatures');

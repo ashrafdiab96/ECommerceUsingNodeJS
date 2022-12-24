@@ -1,3 +1,10 @@
+/**
+ * @file ApiFeatures.js
+ * @desc collect features for filtering and search
+ * @version 1.0.0
+ * @author AshrafDiab
+ */
+
 class ApiFeatures {
     constructor (mongooseQuery, queryString) {
         this.mongooseQuery = mongooseQuery;
