@@ -5,6 +5,9 @@
  * @author AshrafDiab
  */
 
+/**************************************************************
+*                           IMPORTS                           *
+**************************************************************/
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
@@ -15,21 +18,22 @@ const globalError = require('./middlewares/errorMiddleware');
 const dbConnection = require('./config/database');
 const categoryRoute = require('./routes/categoryRoute');
 const subCategoryRoute = require('./routes/subCategoryRoute');
-const brands = require('./routes/brandRoute');
+const brandsRoute = require('./routes/brandRoute');
+const productRoute = require('./routes/productRoute');
 
-/**************************************************************/
-
-// Connect to database
+/**************************************************************
+*                     DATABASE CONNECTION                     *
+**************************************************************/
 dbConnection();
 
-/**************************************************************/
-
-// Express app
+/**************************************************************
+*                        EXPRESS APP                          *
+**************************************************************/
 const app = new express();
 
-/**************************************************************/
-
-// Middlewares
+/**************************************************************
+*                        MIDDELWARES                          *
+**************************************************************/
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
@@ -38,12 +42,13 @@ if(process.env.NODE_ENV === 'development') {
     console.log(`node: ${process.env.NODE_ENV}`);
 }
 
-/**************************************************************/
-
-// Routes
+/**************************************************************
+*                           ROUTES                            *
+**************************************************************/
 app.use('/api/v1/categories', categoryRoute);
 app.use('/api/v1/subcategories', subCategoryRoute);
-app.use('/api/v1/brands', brands);
+app.use('/api/v1/brands', brandsRoute);
+app.use('/api/v1/products', productRoute);
 
 // Handel not exist routes error and send it to error middleware
 app.all('*', (req, res, next) => {
@@ -53,9 +58,9 @@ app.all('*', (req, res, next) => {
 // Global error handeling middleware for express
 app.use(globalError);
 
-/**************************************************************/
-
-// Server
+/**************************************************************
+*                           SERVER                            *
+**************************************************************/
 const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, () => {
     console.log(`App running on port ${PORT}`);

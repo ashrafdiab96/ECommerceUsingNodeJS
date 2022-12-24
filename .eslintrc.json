@@ -14,7 +14,11 @@
       "no-underscore-dangle": "off",
       "class-methods-use-this": "off",
       "no-undef": "error",
+      "node/no-unsupported-features/es-syntax": "off",
+      "new-cap": "off",
+      "import/newline-after-import": "off",
+      "eqeqeq": "off",
       "prefer-destructuring": ["error", { "object": true, "array": false }],
-    //   "no-unused-vars": ["warn", { "argsIgnorePattern": "req|res|next|val" }]
+      "no-unused-vars": ["warn", { "argsIgnorePattern": "req|res|next|val" }]
     }
 }
