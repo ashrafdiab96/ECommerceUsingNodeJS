@@ -5,8 +5,35 @@
  * @author AshrafDiab
  */
 
+const sharp = require('sharp');
+const asyncHandler = require('express-async-handler');
+const { v4: uuidv4 } = require('uuid');
+
 const factory = require('./handlersFactory');
+const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
 const Category = require('../models/categoryModel');
+
+/* upload category image */
+exports.uploadCategoryImage = uploadSingleImage('image');
+
+/**
+ * @middleware resizeImage
+ * @desc resize uploaded image
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+    const fileName = `category-${uuidv4()}-${Date.now()}.jpeg`;
+    await sharp(req.file.buffer)
+        .resize(600, 600)
+        .toFormat('jpeg')
+        .jpeg({ quality: 95 })
+        .toFile(`uploads/categories/${fileName}`);
+    
+    req.body.image = fileName;
+    next();
+});
 
 /**
  * @method getCategories

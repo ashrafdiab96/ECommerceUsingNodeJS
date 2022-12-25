@@ -23,6 +23,20 @@ const categorySchema = new mongoose.Schema({
     image: String,
 }, { timestamps: true });
 
+/* set image url */
+const setImageUrl = (doc) => {
+    if (doc.image) {
+        const imageUrl = `${process.env.BASE_URL}/categories/${doc.image}`;
+        doc.image = imageUrl;
+    }
+};
+
+/* mongoose middleware to return image url on get and update */
+categorySchema.post('init', (doc) => setImageUrl(doc));
+
+/* mongoose middleware to return image url on save */
+categorySchema.post('save', (doc) => setImageUrl(doc));
+
 /* create model for category */
 const CategoryModel = mongoose.model('Category', categorySchema); 
 

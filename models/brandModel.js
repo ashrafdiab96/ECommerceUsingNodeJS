@@ -23,6 +23,20 @@ const brandSchema = new mongoose.Schema({
     image: String,
 }, { timestamps: true });
 
+/* set image url */
+const setImageUrl = (doc) => {
+    if (doc.image) {
+        const imageUrl = `${process.env.BASE_URL}/brands/${doc.image}`;
+        doc.image = imageUrl;
+    }
+};
+
+/* mongoose middleware to return image url on get and update */
+brandSchema.post('init', (doc) => setImageUrl(doc));
+
+/* mongoose middleware to return image url on save */
+brandSchema.post('save', (doc) => setImageUrl(doc));
+
 /* create brand model */
 const BrandModel = mongoose.model('Brand', brandSchema);
 

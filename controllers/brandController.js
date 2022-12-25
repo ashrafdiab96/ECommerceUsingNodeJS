@@ -5,8 +5,35 @@
  * @author AshrafDiab
  */
 
+const sharp = require('sharp');
+const asyncHandler = require('express-async-handler');
+const { v4: uuidv4 } = require('uuid');
+
 const factory = require('./handlersFactory');
+const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
 const Brand = require('../models/brandModel');
+
+/* upload category image */
+exports.uploadBrandImage = uploadSingleImage('image');
+
+/**
+ * @middleware resizeImage
+ * @desc resize uploaded image
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+exports.resizeImge = asyncHandler(async (req, res, next) => {
+    const fileName = `brand-${uuidv4()}-${Date.now()}.jpeg`;
+    await sharp(req.file.buffer)
+        .resize(600, 600)
+        .toFormat('jpeg')
+        .jpeg({ quality: 95 })
+        .toFile(`uploads/brands/${fileName}`);
+    
+    req.body.image = fileName;
+    next();
+});
 
 /**
  * @method getBrands
