@@ -13,7 +13,11 @@ const factory = require('./handlersFactory');
 const { uploadMixOfImages } = require('../middlewares/uploadImageMiddleware');
 const Product = require('../models/productModel');
 
-/* upload product images */
+/**
+ * @method uploadProductImage
+ * @desc upload product images
+ * @param {*} fieldName
+ */
 exports.uploadProductImage = uploadMixOfImages([
     { name: 'imageCover', maxCount: 1 },
     { name: 'images', maxCount: 5 },

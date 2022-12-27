@@ -4,15 +4,19 @@ const sharp = require('sharp');
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-
 const { v4: uuidv4 } = require('uuid');
+
 const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
-const ApiError = require('../utils/ApiError');
 const sendEmail = require('../utils/sendEmail');
 const generateToken = require('../utils/generateToken');
+const ApiError = require('../utils/ApiError');
 const User = require('../models/userModel');
 
-/* upload user profile image */
+/**
+ * @method createUserImage
+ * @desc upload user profile image
+ * @param {*} fieldName
+ */
 exports.createUserImage = uploadSingleImage('profileImg');
 
 /**
@@ -111,7 +115,7 @@ const checkUserToken = (req, res, next) => {
 
 /**
  * @middleware protect
- * @desc check token validation
+ * @desc check if user is exists and don't change his password after token generated
  * @param {*} req
  * @param {*} res
  * @param {*} next
@@ -175,16 +179,86 @@ exports.checkActivation = asyncHandler(async (req, res, next) => {
 });
 
 /**
- * @method allowedTo
- * check if authenticated user has permission to access routes or not
+ * @middleware allowedTo
+ * @desc check if authenticated user has permission to access routes or not
  * @param {...any} roles 
- * @returns 
+ * @returns
  */
 exports.allowedTo = (...roles) => asyncHandler(async (req, res, next) => {
     if (!roles.includes(req.user.role)) {
         return next(new ApiError('You are not allowed to access this route', 403));
     }
     next();
+});
+
+/**
+ * @method generateResetCode
+ * @desc generate token from 6 digits
+ * @returns {integer} resetCode
+ */
+const generateResetCode = () => {
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    return resetCode;
+};
+
+/**
+ * @method hashGeneratedCode
+ * @desc hash generated reset code
+ * @param {integer} resetCode 
+ * @returns {string} hashedResetCode
+ */
+const hashGeneratedCode = (resetCode) => {
+    const hashedResetCode = crypto.createHash('sha256').update(resetCode).digest('hex');
+    return hashedResetCode;
+};
+
+/**
+ * @method saveResetCodeData
+ * @desc save generated reset code, expires and verified in the db
+ * @param {integer} resetCode 
+ * @returns void
+ */
+const saveResetCodeData = asyncHandler(async (user, hashedResetCode) => {
+    user.passwordResetCode = hashedResetCode;
+    user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    user.passwordResetVerified = false;
+    await user.save();
+});
+
+/**
+ * @method setResetCodeDataByUndefine
+ * @desc save passwordResetCode, passwordResetExpires & passwordResetVerified -
+ * - by undefined when any error occurs
+ * @param {object} user 
+ * @returns void
+ */
+const setResetCodeDataByUndefine = asyncHandler(async (user) => {
+    user.passwordResetCode = undefined;
+    user.passwordResetExpires = undefined;
+    user.passwordResetVerified = undefined;
+    await user.save();
+});
+
+/**
+ * @method sendResetEmail
+ * @desc send reset code via email
+ * @param {object} user
+ * @param {integer} resetCode
+ * @returns void
+ */
+const sendResetEmail = asyncHandler(async (user, resetCode) => {
+    const message = `
+        Hi ${user.name},\n
+        We are received a request to reset your ${process.env.APP_NAME} password.\n
+        ${resetCode}\n
+        Enter this code to reset your password.\n
+        Please note that this code is valid for only 10 minutes.
+    `;
+    await sendEmail({
+        email: user.email,
+        subject: 'Your password reset code',
+        message,
+    });
 });
 
 /**
@@ -204,36 +278,19 @@ exports.forgetPassword = asyncHandler(async (req, res, next) => {
             `User with email: ${ req.body.email } is not found`, 404
         ));
     }
-    // generate reset code (6 random digits), encrypt it
-    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const hashedResetCode = crypto.createHash('sha256').update(resetCode).digest('hex');
-    // save hashed reset code in the db
-    user.passwordResetCode = hashedResetCode;
-    user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-    user.passwordResetVerified = false;
-    await user.save();
+    
+    // generate reset code, hash it and save it in the db
+    const resetCode = generateResetCode(user);
+    const hashedResetCode = hashGeneratedCode(resetCode);
+    await saveResetCodeData(user, hashedResetCode);
+    
     // send the reset code via email
-    const message = `
-        Hi ${user.name},\n
-        We received a request to reset your ${process.env.APP_NAME} password.\n
-        ${resetCode}\n
-        Enter this code to reset your password.\n
-        Please note that this code is valid for only 10 minutes.
-    `;
     try {
-        await sendEmail({
-            email: user.email,
-            subject: 'Your password reset code',
-            message,
-        });
+        await sendResetEmail(user, resetCode);
     } catch (error) {
-        user.passwordResetCode = undefined;
-        user.passwordResetExpires = undefined;
-        user.passwordResetVerified = undefined;
-        await user.save();
+        await setResetCodeDataByUndefine(user);
         return next(new ApiError('There is an error in sending email', 500));
     }
-    
     res.status(200).json({ success: 'Success', message: 'Reset code sent to email' });
 });
 
@@ -247,24 +304,16 @@ exports.forgetPassword = asyncHandler(async (req, res, next) => {
  * @return void
  */
 exports.verifyResetCode = asyncHandler(async (req, res, next) => {
-    // get user based on reset code
-    const hashedResetCode = crypto
-        .createHash('sha256')
-        .update(req.body.resetCode)
-        .digest('hex');
-    
+    const hashedResetCode = hashGeneratedCode(req.body.resetCode);
     const user = await User.findOne({
         passwordResetCode: hashedResetCode,
         passwordResetExpires: { $gt: Date.now() },
-        // passwordResetVerified: false,
     });
     if (!user) {
         return next(new ApiError('Reset code is invlid or expired', 400));
     }
-
     user.passwordResetVerified = true;
     await user.save();
-
     res.status(200).json({ status: 'Success' });
 });
 

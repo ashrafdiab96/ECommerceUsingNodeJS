@@ -9,7 +9,7 @@ const ApiError = require("../utils/ApiError");
 
 /**
  * @method sendErrorForDev
- * Send error object in development mode
+ * @desc send error object in development mode
  * @param {*} error 
  * @param {*} res 
  * @returns response
@@ -23,7 +23,7 @@ const sendErrorForDev = (error, res) => res.status(error.statusCode).json({
 
 /**
  * @method sendErrorForProd
- * Send error object in production mode
+ * @desc send error object in production mode
  * @param {*} error 
  * @param {*} res 
  * @returns response
@@ -35,7 +35,8 @@ const sendErrorForProd = (error, res) => res.status(error.statusCode).json({
 
 /**
  * @method handleJwtInvalidSignature
- * Handel errors which happen because of token invalid signature
+ * @desc handel errors which happen because of token invalid signature
+ * @returns void
  */
 const handleJwtInvalidSignature = () => new ApiError(
     'Invalid token, please login again', 401
@@ -43,7 +44,8 @@ const handleJwtInvalidSignature = () => new ApiError(
 
 /**
  * @method handleJwtExpiration
- * Handel errors which happen because of token invalid signature
+ * @desc handel errors which happen because of token invalid signature
+ * @returns void
  */
 const handleJwtExpiration = () => new ApiError(
     'Expired token, please login again', 401
@@ -51,7 +53,7 @@ const handleJwtExpiration = () => new ApiError(
 
 /**
  * @method globalError
- * Handel errors which happen inside express
+ * @desc handel errors which happen inside express
  * @param {*} error 
  * @param {*} req 
  * @param {*} res 

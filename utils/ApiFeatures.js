@@ -13,7 +13,7 @@ class ApiFeatures {
 
     /**
      * @method limitFields
-     * enabel client to filter data
+     * @desc enabel client to filter data
      * @returns object
      */
     filter() {
@@ -29,7 +29,7 @@ class ApiFeatures {
 
     /**
      * @method limitFields
-     * enabel client to select limited fields
+     * @desc enabel client to select limited fields
      * @returns object
      */
     sort() {
@@ -44,7 +44,7 @@ class ApiFeatures {
 
     /**
      * @method limitFields
-     * enabel client to select limited fields
+     * @desc enabel client to select limited fields
      * @returns object
      */
     limitFields() {
@@ -59,7 +59,7 @@ class ApiFeatures {
 
     /**
      * @method search
-     * handel search
+     * @desc handel search
      * @returns object
      */
     search(modelName) {
@@ -80,7 +80,7 @@ class ApiFeatures {
 
     /**
      * @method paginate
-     * handel pagination
+     * @desc handel pagination
      * @param {*} countDocuments 
      * @returns object
      */

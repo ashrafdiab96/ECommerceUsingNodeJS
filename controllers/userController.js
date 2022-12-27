@@ -16,7 +16,11 @@ const generateToken = require('../utils/generateToken');
 const ApiError = require('../utils/ApiError');
 const User = require('../models/userModel');
 
-/* upload user profile image */
+/**
+ * @method uploadUserImage
+ * @desc upload user profile image
+ * @param {*} fieldName
+ */
 exports.uploadUserImage = uploadSingleImage('profileImg');
 
 /**
@@ -127,7 +131,7 @@ exports.changeUserPassword = asyncHandler(async (req, res, next) => {
 exports.deleteUser = factory.deleteOne(User);
 
 /**
- * @middleware getLoggedUserData
+ * @method getLoggedUserData
  * @desc set user id in request params and call get() method after this middleware
  * @route GET /api/v1/users/getMe
  * @access private

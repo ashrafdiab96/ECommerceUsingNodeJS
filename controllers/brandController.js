@@ -13,7 +13,11 @@ const factory = require('./handlersFactory');
 const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
 const Brand = require('../models/brandModel');
 
-/* upload category image */
+/**
+ * @method uploadBrandImage
+ * @desc upload brand image
+ * @param {*} fieldName
+ */
 exports.uploadBrandImage = uploadSingleImage('image');
 
 /**

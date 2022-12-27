@@ -2,24 +2,16 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
     // create transporter, service will send email (gmail, mailgun ...)
-    // const transporter = nodemailer.createTransport({
-    //     host: process.env.EMAIL_HOST,
-    //     port: process.env.EMAIL_PORT,
-    //     secure: false,
-    //     auth: {
-    //         user: process.env.EMAIL_USER,
-    //         pass: process.env.EMAIL_PASSWORD,
-    //     },
-    // });
     const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: process.env.EMAIL_SECURE,
         auth: {
-            user: 'debofarm2020@gmail.com',
-            pass: 'hfvminjkmsdlcurd',
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD,
         },
     });
+
     // define email options (from, to, subject, content)
     const mailOptions = {
         from: `${process.env.APP_NAME} <${process.env.EMAIL_USER}>`,

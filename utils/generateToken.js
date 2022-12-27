@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 /**
  * @method generateToken
- * generate a new token
+ * @desc generate a new token
  * @param {*} payload 
  * @returns token
  */

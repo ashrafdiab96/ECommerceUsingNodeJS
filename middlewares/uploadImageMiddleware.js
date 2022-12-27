@@ -10,8 +10,8 @@ const ApiError = require('../utils/ApiError');
 
 /**
  * @method multerOptions
- * handle multer options
- * @returns 
+ * @desc handle multer options
+ * @returns void
  */
 const multerOptions = () => {
     const multerStorage = multer.memoryStorage();

@@ -15,6 +15,7 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 
 dotenv.config({path: 'config.env'});
+
 const ApiError = require('./utils/ApiError');
 const globalError = require('./middlewares/errorMiddleware');
 const dbConnection = require('./config/database');
@@ -24,6 +25,7 @@ const brandsRoute = require('./routes/brandRoute');
 const productRoute = require('./routes/productRoute');
 const userRoute = require('./routes/userRoute');
 const authRoute = require('./routes/authRoute');
+// const reviewRoute = require('./routes/reviewRoute');
 
 /**************************************************************
 *                     DATABASE CONNECTION                     *
@@ -56,6 +58,7 @@ app.use('/api/v1/brands', brandsRoute);
 app.use('/api/v1/products', productRoute);
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/auth', authRoute);
+// app.use('/api/v1/reviews', reviewRoute);
 
 // Handel not exist routes error and send it to error middleware
 app.all('*', (req, res, next) => {
