@@ -24,17 +24,35 @@ const {
     setCategoryIdToParams,
 } = require('../controllers/subCategoryController');
 
+const autController = require('../controllers/authController');
+
 const router = express.Router({ mergeParams: true });
 
 router
     .route('/')
     .get(createFilterObj, getSubCategories)
-    .post(setCategoryIdToParams, createSubCategoryValidator, createSubCategory);
+    .post(
+        autController.protect,
+        autController.allowedTo('admin', 'manager'),
+        setCategoryIdToParams,
+        createSubCategoryValidator,
+        createSubCategory
+    );
 
 router
     .route('/:id')
     .get(getSubCategoryValidator, getSubCategory)
-    .put(updateSubCategoryValidator, updateSubCategory)
-    .delete(deleteSubCategoryValidator, deleteSubCategory);
+    .put(
+        autController.protect,
+        autController.allowedTo('admin', 'manager'),
+        updateSubCategoryValidator,
+        updateSubCategory
+    )
+    .delete(
+        autController.protect,
+        autController.allowedTo('admin'),
+        deleteSubCategoryValidator,
+        deleteSubCategory
+    );
 
 module.exports = router;

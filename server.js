@@ -22,6 +22,8 @@ const categoryRoute = require('./routes/categoryRoute');
 const subCategoryRoute = require('./routes/subCategoryRoute');
 const brandsRoute = require('./routes/brandRoute');
 const productRoute = require('./routes/productRoute');
+const userRoute = require('./routes/userRoute');
+const authRoute = require('./routes/authRoute');
 
 /**************************************************************
 *                     DATABASE CONNECTION                     *
@@ -52,6 +54,8 @@ app.use('/api/v1/categories', categoryRoute);
 app.use('/api/v1/subcategories', subCategoryRoute);
 app.use('/api/v1/brands', brandsRoute);
 app.use('/api/v1/products', productRoute);
+app.use('/api/v1/users', userRoute);
+app.use('/api/v1/auth', authRoute);
 
 // Handel not exist routes error and send it to error middleware
 app.all('*', (req, res, next) => {

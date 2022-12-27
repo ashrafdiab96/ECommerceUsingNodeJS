@@ -5,6 +5,8 @@
  * @author AshrafDiab
  */
 
+const ApiError = require("../utils/ApiError");
+
 /**
  * @method sendErrorForDev
  * Send error object in development mode
@@ -12,7 +14,7 @@
  * @param {*} res 
  * @returns response
  */
-const sendErrorForDev = (error, res) => res.status(400).json({ 
+const sendErrorForDev = (error, res) => res.status(error.statusCode).json({ 
     status: error.status,
     error: error,
     message: error.message,
@@ -26,10 +28,26 @@ const sendErrorForDev = (error, res) => res.status(400).json({
  * @param {*} res 
  * @returns response
  */
-const sendErrorForProd = (error, res) => res.status(400).json({ 
+const sendErrorForProd = (error, res) => res.status(error.statusCode).json({ 
     status: error.status,
     message: error.message,
 });
+
+/**
+ * @method handleJwtInvalidSignature
+ * Handel errors which happen because of token invalid signature
+ */
+const handleJwtInvalidSignature = () => new ApiError(
+    'Invalid token, please login again', 401
+);
+
+/**
+ * @method handleJwtExpiration
+ * Handel errors which happen because of token invalid signature
+ */
+const handleJwtExpiration = () => new ApiError(
+    'Expired token, please login again', 401
+);
 
 /**
  * @method globalError
@@ -45,6 +63,8 @@ const globalError = (error, req, res, next) => {
     if (process.env.NODE_ENV === 'development') {
         sendErrorForDev(error, res);
     } else if (process.env.NODE_ENV === 'production') {
+        if (error.name === 'JsonWebTokenError') error = handleJwtInvalidSignature();
+        if (error.name === 'TokenExpiredError') error = handleJwtExpiration();
         sendErrorForProd(error, res);
     }
 };

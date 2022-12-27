@@ -24,17 +24,38 @@ const {
     resizeProductImage,
 } = require('../controllers/productController');
 
+const autController = require('../controllers/authController');
+
 const router = express.Router();
 
 router
     .route('/')
     .get(getProducts)
-    .post(uploadProductImage, resizeProductImage, createProductValidator, createProduct);
+    .post(
+        autController.protect,
+        autController.allowedTo('admin', 'manager'),
+        uploadProductImage,
+        resizeProductImage,
+        createProductValidator,
+        createProduct
+    );
 
 router
     .route('/:id')
     .get(getProductValidator, getProduct)
-    .put(uploadProductImage, resizeProductImage, updateProductValidator, updateProduct)
-    .delete(deleteProductValidator, deleteProduct);
+    .put(
+        autController.protect,
+        autController.allowedTo('admin', 'manager'),
+        uploadProductImage,
+        resizeProductImage,
+        updateProductValidator,
+        updateProduct
+    )
+    .delete(
+        autController.protect,
+        autController.allowedTo('admin'),
+        deleteProductValidator,
+        deleteProduct
+    );
 
 module.exports = router;
