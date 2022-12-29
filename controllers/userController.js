@@ -29,6 +29,7 @@ exports.uploadUserImage = uploadSingleImage('profileImg');
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @returns {void} void
  */
 exports.resizeImge = asyncHandler(async (req, res, next) => {
     if (req.file) {
@@ -214,7 +215,6 @@ exports.deactivateLoggedUser = asyncHandler(async (req, res, next) => {
  * @return void
  */
 exports.activateLoggedUser = asyncHandler(async (req, res, next) => {
-    console.log(req.user);
     const user = await User.findOneAndUpdate(req.user._id, { active: true });
     res.status(200).json({ data: user, status: 'success' });
 });

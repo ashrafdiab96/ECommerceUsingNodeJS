@@ -76,7 +76,7 @@ exports.getProducts = factory.getAll(Product, 'Product');
  * @access public
  * @return object
  */
-exports.getProduct = factory.getOne(Product);
+exports.getProduct = factory.getOne(Product, 'reviews');
 
 /**
  * @method createProduct

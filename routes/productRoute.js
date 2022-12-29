@@ -24,9 +24,13 @@ const {
     resizeProductImage,
 } = require('../controllers/productController');
 
+const reviewsRoute = require("./reviewRoute");
+
 const autController = require('../controllers/authController');
 
 const router = express.Router();
+
+router.use('/:productId/reviews', reviewsRoute);
 
 router
     .route('/')

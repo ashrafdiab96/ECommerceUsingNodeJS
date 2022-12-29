@@ -45,9 +45,13 @@ exports.getAll = (Model, mdelName) => asyncHandler(async (req, res) => {
  * @param {*} res
  * @return object
  */
-exports.getOne = (Model) => asyncHandler(async (req, res, next) => {
+exports.getOne = (Model, populationOpt) => asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const document = await Model.findById(id);
+    let query = Model.findById(id);
+    if (populationOpt) {
+        query = query.populate(populationOpt);
+    }
+    const document = await query;
     if (!document) {
         return next(new ApiError(`Document with id ${id} is not found`, 404));
     }
@@ -77,10 +81,14 @@ exports.createOne = (Model) => asyncHandler(async (req, res) => {
  * @return object 
  */
 exports.updateOne = (Model) => asyncHandler(async (req, res, next) => {
-    const document = await Model.findByIdAndUpdate( req.params.id, req.body, { new: true });
+    const document = await Model.findByIdAndUpdate(
+        req.params.id, req.body, { new: true }
+    );
     if (!document) {
         return next(new ApiError(`Document with id: ${req.params.id} is not found`, 404));
     }
+    /* trigger save event */
+    document.save();
     res.status(200).json({ data: document });
 });
 
@@ -99,5 +107,7 @@ exports.deleteOne = (Model) => asyncHandler(async (req, res, next) => {
     if (!document) {
         return next(new ApiError(`Document with id: ${id} is not found`, 404));
     }
+    /* trigger remove event */
+    document.remove();
     res.status(204).json();
 });
