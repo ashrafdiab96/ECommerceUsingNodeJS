@@ -5,10 +5,14 @@
  * @author AshrafDiab
  */
 
+// package for creating slug
 const slugify = require('slugify');
+// package for validation
 const { check, body } = require('express-validator');
 
+// validation middleware return any validation error
 const validatorMiddleware = require('../../middlewares/validatorMiddleware');
+// user model
 const User = require('../../models/userModel');
 
 exports.signupValidator = [
@@ -16,9 +20,9 @@ exports.signupValidator = [
         .notEmpty()
         .withMessage('Name is required')
         .isLength({ min: 3 })
-        .withMessage('Too short brand name')
+        .withMessage('Too short user name')
         .isLength({ max: 32 })
-        .withMessage('Too long brand name'),
+        .withMessage('Too long user name'),
 
     body('name')    
         .custom((value, { req }) => {
@@ -29,11 +33,14 @@ exports.signupValidator = [
     check('email')
         .notEmpty().withMessage('Email is required')
         .isEmail().withMessage('Invalid email')
-        .custom((value) => User.findOne({ email: value }).then((user) => {
+        .custom(async (value) => {
+            const user = await User.findOne({ email: value });
             if (user) {
-                return Promise.reject(new Error('This email is already exists'));
+                return Promise.reject(
+                    new Error(`This email: ${value} is already exists`)
+                );
             }
-        })),
+        }),
 
     check('password')
         .notEmpty().withMessage('Password is requierd')
@@ -53,7 +60,18 @@ exports.signupValidator = [
         .isMobilePhone(['ar-EG', 'ar-SA']).withMessage('Invalid phone number'),
         
     check('profileImg').optional(),
-    check('role').optional(),
+    check('role')
+        .optional()
+        .custom((value) => {
+            const roles = ['admin', 'manager', 'user'];
+            const checker = roles.includes(value);
+            if (!checker) {
+                return Promise.reject(
+                    new Error('Invalid role', 400)
+                );
+            }
+            return true;
+        }),
     check('actice').optional(),
     validatorMiddleware,
 ];

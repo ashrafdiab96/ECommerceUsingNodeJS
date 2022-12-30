@@ -5,18 +5,24 @@
  * @author AshrafDiab
  */
 
+// nodejs image processing package
 const sharp = require('sharp');
+// express error handler for async functions (catch errors)
 const asyncHandler = require('express-async-handler');
+// create a strong unique random values
 const { v4: uuidv4 } = require('uuid');
 
+// CRUD functions handler
 const factory = require('./handlersFactory');
+// handle upload images
 const { uploadMixOfImages } = require('../middlewares/uploadImageMiddleware');
+// product model
 const Product = require('../models/productModel');
 
 /**
  * @method uploadProductImage
  * @desc upload product images
- * @param {*} fieldName
+ * @param {Array[object]} imagesData
  */
 exports.uploadProductImage = uploadMixOfImages([
     { name: 'imageCover', maxCount: 1 },
@@ -29,6 +35,7 @@ exports.uploadProductImage = uploadMixOfImages([
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @returns {void} void
  */
 exports.resizeProductImage = asyncHandler(async (req, res, next) => {
     if (req.files.imageCover) {
@@ -65,7 +72,9 @@ exports.resizeProductImage = asyncHandler(async (req, res, next) => {
  * @desc get all sub products
  * @route GET /api/v1/products
  * @access public
- * @return array[objects]
+ * @param {Model} Product
+ * @param {string} ModelName
+ * @return {Array[object]} products
  */
 exports.getProducts = factory.getAll(Product, 'Product');
 
@@ -74,7 +83,8 @@ exports.getProducts = factory.getAll(Product, 'Product');
  * @desc get specific product by id
  * @route GET /api/v1/products/:id
  * @access public
- * @return object
+ * @param {Model} Product
+ * @return {object} product
  */
 exports.getProduct = factory.getOne(Product, 'reviews');
 
@@ -83,7 +93,8 @@ exports.getProduct = factory.getOne(Product, 'reviews');
  * @desc create new product
  * @route POST /api/v1/products
  * @access private
- * @return object
+ * @param {Model} Product
+ * @return {object} product
  */
 exports.createProduct = factory.createOne(Product);
 
@@ -92,7 +103,8 @@ exports.createProduct = factory.createOne(Product);
  * @desc update specific product by id
  * @route PUT /api/v1/products/:id
  * @access private
- * @return object
+ * @param {Model} Product
+ * @return {object} product
  */
 exports.updateProduct = factory.updateOne(Product);
 
@@ -101,6 +113,7 @@ exports.updateProduct = factory.updateOne(Product);
  * @desc delete specific product by id
  * @route DELETE /api/v1/products/:id
  * @access private
- * @return void 
+ * @param {Model} Product
+ * @return {void} void 
  */
 exports.deleteProduct = factory.deleteOne(Product);

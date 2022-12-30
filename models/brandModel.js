@@ -5,6 +5,7 @@
  * @author AshrafDiab
  */
 
+// mongo db ODM
 const mongoose = require('mongoose');
 
 /* create brand schema */

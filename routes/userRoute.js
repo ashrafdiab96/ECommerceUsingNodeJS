@@ -5,8 +5,10 @@
  * @author AshrafDiab
  */
 
+// nodejs web framework
 const express = require('express');
 
+// validation functions
 const {
     getUserValidator,
     createUserValidator,
@@ -16,6 +18,7 @@ const {
     updateLoggedUserValidator,
 } = require('../utils/validator/userValidator');
 
+// CRUD methods and middlewares
 const {
     getUser,
     getUsers,
@@ -32,13 +35,15 @@ const {
     activateLoggedUser,
 } = require('../controllers/userController');
 
+// authentication controller -> to authenticate and autherrizate some routes
 const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-// User
+// user routes 
 router.put('/activeMe', authController.protect, activateLoggedUser);
 
+// authentication middleware
 router.use(authController.protect, authController.checkActivation);
 router.get('/getMe', getLoggedUserData, getUser);
 router.put(
@@ -54,7 +59,8 @@ router.put(
 
 router.delete('/deleteMe', deactivateLoggedUser);
 
-// Admin
+// admin routes
+// autherization middleware
 router.use(authController.allowedTo('admin'));
 
 router.put('/changePassword/:id', changePasswordValidator, changeUserPassword);

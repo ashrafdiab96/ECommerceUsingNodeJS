@@ -5,6 +5,7 @@
  * @author AshrafDiab
  */
 
+// package for validation entered data
 const { validationResult } = require('express-validator');
 
 /**

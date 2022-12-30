@@ -5,17 +5,19 @@
  * @author AshrafDiab
  */
 
+// CRUD functions handler
 const factory = require('./handlersFactory');
+// subcategory model
 const SubCategory = require('../models/subCategoryModel');
 
 /**
  * @middleware createFilterObj
- * @desc check if is set categoryId on request params create filter
+ * @desc check if is set categoryId/subcategories on request create filter
  * @route GET /api/v1/categories/:categoryId/subcategories
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @returns {void} void
  */
 exports.createFilterObj = (req, res, next) => {
     let filterObject = {};
@@ -26,12 +28,12 @@ exports.createFilterObj = (req, res, next) => {
 
 /**
  * @middleware setCategoryIdToParams
- * @desc middleware check if category is not set get it from params
+ * @desc middleware check if category is not set in body, get it from params
  * @route POST /api/v1/categories/:categoryId/subcategories
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.setCategoryIdToParams = (req, res, next) => {
     if (!req.body.category) req.body.category = req.params.categoryId;
@@ -43,7 +45,9 @@ exports.setCategoryIdToParams = (req, res, next) => {
  * @desc get all sub categories
  * @route GET /api/v1/subcategories
  * @access public
- * @return array[objects]
+ * @param {Model} SubCategory
+ * @param {string} ModelName
+ * @return {array[objects]} subcategories
  */
 exports.getSubCategories = factory.getAll(SubCategory, 'SubCategory');
 
@@ -52,7 +56,8 @@ exports.getSubCategories = factory.getAll(SubCategory, 'SubCategory');
  * @desc get specific sub category by id
  * @route GET /api/v1/subcategories/:id
  * @access public
- * @return object
+ * @param {Model} SubCategory
+ * @return {object} subcategory
  */
 exports.getSubCategory = factory.getOne(SubCategory);
 
@@ -61,7 +66,8 @@ exports.getSubCategory = factory.getOne(SubCategory);
  * @desc create new sub category
  * @route POST /api/v1/subcategories
  * @access private
- * @return object
+ * @param {Model} SubCategory
+ * @return {object} subcategory
  */
 exports.createSubCategory = factory.createOne(SubCategory);
 
@@ -70,9 +76,8 @@ exports.createSubCategory = factory.createOne(SubCategory);
  * @desc update specific sub category by id
  * @route PUT /api/v1/subcategories/:id
  * @access private
- * @param {*} req 
- * @param {*} res
- * @return object 
+ * @param {Model} SubCategory
+ * @return {object} subcategory 
  */
 exports.updateSubCategory = factory.updateOne(SubCategory);
 
@@ -81,6 +86,7 @@ exports.updateSubCategory = factory.updateOne(SubCategory);
  * @desc delete specific sub category by id
  * @route DELETE /api/v1/subcategories/:id
  * @access private
- * @return void 
+ * @param {Model} SubCategory
+ * @return {void} void 
  */
 exports.deleteSubCategory = factory.deleteOne(SubCategory);

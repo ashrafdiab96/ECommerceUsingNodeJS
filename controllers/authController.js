@@ -1,15 +1,34 @@
+/**
+ * @file authController.js
+ * @desc auth controller
+ * @version 1.0.0
+ * @author AshrafDiab
+ */
+
+// builtin nodejs hashing package
 const crypto = require('crypto');
 
+// nodejs image processing package
 const sharp = require('sharp');
+// express error handler for async functions (catch errors)
 const asyncHandler = require('express-async-handler');
+// json web token -> package for generating token
 const jwt = require('jsonwebtoken');
+// hashing and encrypt passwords
 const bcrypt = require('bcryptjs');
+// create a strong unique random values
 const { v4: uuidv4 } = require('uuid');
 
+const factory = require('./handlersFactory');
+// handle upload images
 const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
+// handle send emails
 const sendEmail = require('../utils/sendEmail');
+// handle generate token
 const generateToken = require('../utils/generateToken');
+// handle errors
 const ApiError = require('../utils/ApiError');
+// user model
 const User = require('../models/userModel');
 
 /**
@@ -17,7 +36,7 @@ const User = require('../models/userModel');
  * @desc upload user profile image
  * @param {*} fieldName
  */
-exports.createUserImage = uploadSingleImage('profileImg');
+exports.uploadUserImage = uploadSingleImage('profileImg');
 
 /**
  * @middleware resizeImage
@@ -25,6 +44,7 @@ exports.createUserImage = uploadSingleImage('profileImg');
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @returns {void} void
  */
 exports.resizeImge = asyncHandler(async (req, res, next) => {
     if (req.file) {
@@ -48,7 +68,7 @@ exports.resizeImge = asyncHandler(async (req, res, next) => {
  * @param {*} res
  * @param {*} next
  * @access public
- * @return object
+ * @return {object, string} {user, token}
  */
 exports.signup = asyncHandler(async (req, res, next) => {
     // create new user
@@ -58,12 +78,14 @@ exports.signup = asyncHandler(async (req, res, next) => {
         email: req.body.email,
         phone: req.body.phone,
         password: req.body.password,
+        profileImg: req.body.profileImg,
     });
 
     // generate token
     const token = generateToken(user._id);
     res.status(201).json({ data: user, token });
 });
+// exports.signup = factory.createOne(User)
 
 /**
  * @method login
@@ -73,7 +95,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
  * @param {*} res
  * @param {*} next
  * @access public
- * @return object
+ * @return {object, string} {user, token}
  */
 exports.login = asyncHandler(async (req, res, next) => {
     // check if user is exists and password is correct
@@ -89,10 +111,10 @@ exports.login = asyncHandler(async (req, res, next) => {
 /**
  * @method checkUserToken
  * @desc check if token is exists & verify token no chenge happens, not expired
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
- * @returns 
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns {object} decoded
  */
 const checkUserToken = (req, res, next) => {
     // check if token is exists
@@ -118,7 +140,7 @@ const checkUserToken = (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.protect = asyncHandler(async (req, res, next) => {
     // get user token
@@ -154,7 +176,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.checkActivation = asyncHandler(async (req, res, next) => {
     // get user token
@@ -181,7 +203,7 @@ exports.checkActivation = asyncHandler(async (req, res, next) => {
  * @middleware allowedTo
  * @desc check if authenticated user has permission to access routes or not
  * @param {...any} roles 
- * @returns
+ * @returns {void} void
  */
 exports.allowedTo = (...roles) => asyncHandler(async (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -215,7 +237,7 @@ const hashGeneratedCode = (resetCode) => {
  * @method saveResetCodeData
  * @desc save generated reset code, expires and verified in the db
  * @param {integer} resetCode 
- * @returns void
+ * @returns {void} void
  */
 const saveResetCodeData = asyncHandler(async (user, hashedResetCode) => {
     user.passwordResetCode = hashedResetCode;
@@ -229,7 +251,7 @@ const saveResetCodeData = asyncHandler(async (user, hashedResetCode) => {
  * @desc save passwordResetCode, passwordResetExpires & passwordResetVerified -
  * - by undefined when any error occurs
  * @param {object} user 
- * @returns void
+ * @returns {void} void
  */
 const setResetCodeDataByUndefine = asyncHandler(async (user) => {
     user.passwordResetCode = undefined;
@@ -243,7 +265,7 @@ const setResetCodeDataByUndefine = asyncHandler(async (user) => {
  * @desc send reset code via email
  * @param {object} user
  * @param {integer} resetCode
- * @returns void
+ * @returns {void} void
  */
 const sendResetEmail = asyncHandler(async (user, resetCode) => {
     const message = `
@@ -267,7 +289,7 @@ const sendResetEmail = asyncHandler(async (user, resetCode) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.forgetPassword = asyncHandler(async (req, res, next) => {
     // get user and check if exists
@@ -279,7 +301,7 @@ exports.forgetPassword = asyncHandler(async (req, res, next) => {
     }
     
     // generate reset code, hash it and save it in the db
-    const resetCode = generateResetCode(user);
+    const resetCode = generateResetCode();
     const hashedResetCode = hashGeneratedCode(resetCode);
     await saveResetCodeData(user, hashedResetCode);
     
@@ -300,7 +322,7 @@ exports.forgetPassword = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.verifyResetCode = asyncHandler(async (req, res, next) => {
     const hashedResetCode = hashGeneratedCode(req.body.resetCode);
@@ -323,7 +345,7 @@ exports.verifyResetCode = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.resetPassord = asyncHandler(async (req, res, next) => {
     // get user

@@ -5,6 +5,7 @@
  * @author AshrafDiab
  */
 
+// mongo db ODM
 const mongoose = require('mongoose');
 
 /* create product schema */
@@ -13,7 +14,6 @@ const productSchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: [true, 'Product title is required'],
-        unique: [true, 'Product must be unique'],
         minlength: [3, 'Too short product name'],
         maxlength: [100, 'Too long product name'],
     },
@@ -79,16 +79,28 @@ const productSchema = new mongoose.Schema({
     toObject: { virtuals: true },
 });
 
-/* make virtual populate to get product reviews */
+/**
+ * @middleware
+ * @desc make virtual populate to get product reviews
+ * @param {any} fielName
+ * @param {any} relationOptions
+ */
 productSchema.virtual('reviews', {
     ref: 'Review',
     foreignField: 'product',
     localField: '_id',
 });
 
-/* mongoose middlewaer */
+/**
+ * @middleware
+ * @desc make population for category
+ * @param {any} matchWord
+ * @param {any} toMakePopulation
+ */
 productSchema.pre(/^find/, function(next) {
     this.populate({ path: 'category', select: 'name -_id' });
+    this.populate({ path: 'subcategories', select: 'name -_id' });
+    this.populate({ path: 'brand', select: 'name -_id' });
     next();
 });
 

@@ -6,31 +6,41 @@
  */
 
 class ApiFeatures {
+    /**
+     * @constructor
+     * @desc assign mongoose query and query string 
+     * @param {*} mongooseQuery -> mongoose query (find())
+     * @param {*} queryString -> request query parameters
+     * @returns {void} void
+     */
     constructor (mongooseQuery, queryString) {
         this.mongooseQuery = mongooseQuery;
         this.queryString = queryString;
     }
 
     /**
-     * @method limitFields
+     * @method filter
      * @desc enabel client to filter data
-     * @returns object
+     * @returns {object} this
      */
     filter() {
+        // take copy of query string and delete specific keywords from it
         const queryStringObj = { ...this.queryString };
         const excludesFields = ['page', 'limit', 'sort', 'fields'];
         excludesFields.forEach((field) => delete queryStringObj[field]);
+        // set $ pre any comparison operator
         let queryStr = JSON.stringify(queryStringObj);
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
         queryStr = JSON.parse(queryStr);
+        // apply query string (comparison operators)
         this.mongooseQuery = this.mongooseQuery.find(queryStr);
         return this;
     }
 
     /**
-     * @method limitFields
-     * @desc enabel client to select limited fields
-     * @returns object
+     * @method sort
+     * @desc enabel client to sort data
+     * @returns {object} this
      */
     sort() {
         if (this.queryString.sort) {
@@ -45,7 +55,7 @@ class ApiFeatures {
     /**
      * @method limitFields
      * @desc enabel client to select limited fields
-     * @returns object
+     * @returns {object} this
      */
     limitFields() {
         if (this.queryString.fields) {
@@ -60,7 +70,7 @@ class ApiFeatures {
     /**
      * @method search
      * @desc handel search
-     * @returns object
+     * @returns {object} this
      */
     search(modelName) {
         if (this.queryString.keyword) {
@@ -82,7 +92,7 @@ class ApiFeatures {
      * @method paginate
      * @desc handel pagination
      * @param {*} countDocuments 
-     * @returns object
+     * @returns {object} this
      */
     paginate(countDocuments) {
         const page = this.queryString.page * 1 || 1;

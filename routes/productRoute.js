@@ -5,8 +5,10 @@
  * @author AshrafDiab
  */
 
+// nodejs web framework
 const express = require('express');
 
+// validation functions
 const {
     getProductValidator,
     createProductValidator,
@@ -14,6 +16,7 @@ const {
     deleteProductValidator,
 } = require('../utils/validator/productValidator');
 
+// CRUD methods and middlewares
 const {
     getProducts,
     getProduct,
@@ -24,12 +27,15 @@ const {
     resizeProductImage,
 } = require('../controllers/productController');
 
+// reviews route -> for nested routes
 const reviewsRoute = require("./reviewRoute");
 
+// authentication controller -> to authenticate and autherrizate some routes
 const autController = require('../controllers/authController');
 
 const router = express.Router();
 
+// nested route to get subcategories which belng to parent category
 router.use('/:productId/reviews', reviewsRoute);
 
 router

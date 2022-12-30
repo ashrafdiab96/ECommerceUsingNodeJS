@@ -5,6 +5,7 @@
  * @author AshrafDiab
  */
 
+// class for handling opertional errors
 const ApiError = require("../utils/ApiError");
 
 /**
@@ -12,7 +13,7 @@ const ApiError = require("../utils/ApiError");
  * @desc send error object in development mode
  * @param {*} error 
  * @param {*} res 
- * @returns response
+ * @returns {response} response
  */
 const sendErrorForDev = (error, res) => res.status(error.statusCode).json({ 
     status: error.status,
@@ -26,7 +27,7 @@ const sendErrorForDev = (error, res) => res.status(error.statusCode).json({
  * @desc send error object in production mode
  * @param {*} error 
  * @param {*} res 
- * @returns response
+ * @returns {response} response
  */
 const sendErrorForProd = (error, res) => res.status(error.statusCode).json({ 
     status: error.status,
@@ -36,7 +37,7 @@ const sendErrorForProd = (error, res) => res.status(error.statusCode).json({
 /**
  * @method handleJwtInvalidSignature
  * @desc handel errors which happen because of token invalid signature
- * @returns void
+ * @returns {void} void
  */
 const handleJwtInvalidSignature = () => new ApiError(
     'Invalid token, please login again', 401
@@ -45,7 +46,7 @@ const handleJwtInvalidSignature = () => new ApiError(
 /**
  * @method handleJwtExpiration
  * @desc handel errors which happen because of token invalid signature
- * @returns void
+ * @returns {void} void
  */
 const handleJwtExpiration = () => new ApiError(
     'Expired token, please login again', 401
@@ -57,7 +58,8 @@ const handleJwtExpiration = () => new ApiError(
  * @param {*} error 
  * @param {*} req 
  * @param {*} res 
- * @param {*} next 
+ * @param {*} next
+ * @returns {void} void
  */
 const globalError = (error, req, res, next) => {
     error.statusCode = error.statusCode || 500;

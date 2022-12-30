@@ -5,21 +5,30 @@
  * @author AshrafDiab
  */
 
+// nodejs image processing package
 const sharp = require('sharp');
+// express error handler for async functions (catch errors)
 const asyncHandler = require('express-async-handler');
+// create a strong unique random values
 const { v4: uuidv4 } = require('uuid');
+// hashing and encrypt passwords
 const bcrypt = require('bcryptjs');
 
+// CRUD functions handler
 const factory = require('./handlersFactory');
+// handle upload images
 const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
+// generate new token
 const generateToken = require('../utils/generateToken');
+// handle errors
 const ApiError = require('../utils/ApiError');
+// user model
 const User = require('../models/userModel');
 
 /**
  * @method uploadUserImage
  * @desc upload user profile image
- * @param {*} fieldName
+ * @param {string} fieldName
  */
 exports.uploadUserImage = uploadSingleImage('profileImg');
 
@@ -50,7 +59,9 @@ exports.resizeImge = asyncHandler(async (req, res, next) => {
  * @desc get all users
  * @route GET /api/v1/users
  * @access public
- * @return array[objects]
+ * @param {Model} User
+ * @param {string} ModelName
+ * @return {array[object]} users
  */
 exports.getUsers = factory.getAll(User, 'User');
 
@@ -59,7 +70,8 @@ exports.getUsers = factory.getAll(User, 'User');
  * @desc get specific user by id
  * @route GET /api/v1/users/:id
  * @access public
- * @return object
+ * @param {Model} User
+ * @return {object} user
  */
 exports.getUser = factory.getOne(User);
 
@@ -68,19 +80,20 @@ exports.getUser = factory.getOne(User);
  * @desc create new user
  * @route POST /api/v1/users
  * @access private
- * @return object
+ * @param {Model} User
+ * @return {object} user
  */
 exports.createUser = factory.createOne(User);
 
 /**
  * @method updateUser
- * @desc update specific user by id
+ * @desc update specific user by id except password
  * @route PUT /api/v1/users/:id
  * @access private
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return object
+ * @return {object} user
  */
 exports.updateUser = asyncHandler(async (req, res, next) => {
     const document = await User.findByIdAndUpdate(req.params.id,
@@ -107,7 +120,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return object
+ * @return {object} user
  */
 exports.changeUserPassword = asyncHandler(async (req, res, next) => {
     const document = await User.findByIdAndUpdate(req.params.id,
@@ -127,7 +140,8 @@ exports.changeUserPassword = asyncHandler(async (req, res, next) => {
  * @desc delete specific user by id
  * @route DELETE /api/v1/users/:id
  * @access private
- * @return void
+ * @param {Model} User
+ * @return {void} user
  */
 exports.deleteUser = factory.deleteOne(User);
 
@@ -139,7 +153,7 @@ exports.deleteUser = factory.deleteOne(User);
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.getLoggedUserData = asyncHandler(async (req, res, next) => {
     req.params.id = req.user._id;
@@ -154,7 +168,7 @@ exports.getLoggedUserData = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.updateLoggedUserPassword = asyncHandler(async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.user._id,
@@ -175,7 +189,7 @@ exports.updateLoggedUserPassword = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.updateLoggedUserData = asyncHandler(async (req, res, next) => {
     const user = await User.findOneAndUpdate(req.user._id, {
@@ -197,7 +211,7 @@ exports.updateLoggedUserData = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.deactivateLoggedUser = asyncHandler(async (req, res, next) => {
     await User.findOneAndUpdate(req.user._id, { active: false });
@@ -212,7 +226,7 @@ exports.deactivateLoggedUser = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.activateLoggedUser = asyncHandler(async (req, res, next) => {
     const user = await User.findOneAndUpdate(req.user._id, { active: true });

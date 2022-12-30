@@ -5,8 +5,10 @@
  * @author AshrafDiab
  */
 
+// mongo db ODM
 const mongoose = require('mongoose');
 
+// product model
 const Product = require('./productModel');
 
 /* create reviews schema */
@@ -35,13 +37,23 @@ const reviewsSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-/* mongoose middleware */
+/**
+ * @middleware
+ * @desc make population for user
+ * @param {any} matchWord
+ * @param {any} toMakePopulation
+ */
 reviewsSchema.pre(/^find/, function (next) {
     this.populate({ path: 'user', select: 'name' });
     next();
 });
 
-/* middleware to calculate average rating and  for product */
+/**
+ * @middleware
+ * @desc calculate average rating and quantity for product
+ * @param {string} productId
+ * @returns {void} void
+ */
 reviewsSchema.statics.calcAvgRatingAndQty = async function (productId) {
     const result = await this.aggregate([
         { $match: { product: productId } },

@@ -5,8 +5,10 @@
  * @author AshrafDiab
  */
 
+// nodejs web framework
 const express = require('express');
 
+// validation functions
 const {
     getReviewValidator,
     createReviewValidator,
@@ -14,6 +16,7 @@ const {
     deleteReviewValidator,
 } = require('../utils/validator/reviewValidator');
 
+// CRUD methods and middlewares
 const {
     getReviews,
     getReview,
@@ -24,6 +27,7 @@ const {
     setProductIdToParams,
 } = require('../controllers/reviewsController');
 
+// authentication controller -> to authenticate and autherrizate some routes
 const autController = require('../controllers/authController');
 
 const router = express.Router({ mergeParams: true });

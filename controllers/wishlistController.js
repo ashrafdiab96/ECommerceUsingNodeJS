@@ -5,8 +5,9 @@
  * @author AshrafDiab
  */
 
+// express error handler for async functions (catch errors)
 const asyncHandler = require('express-async-handler');
-
+// user model
 const User = require('../models/userModel');
 
 /**
@@ -16,9 +17,9 @@ const User = require('../models/userModel');
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @access private
  * @returns {array[object]} wishlist
  */
-
 exports.getLoggedUserWishlist = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.user._id).populate('wishlist');
     res.status(200).json({ result: user.wishlist.length, data: user.wishlist });
@@ -31,9 +32,9 @@ exports.getLoggedUserWishlist = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @access private
  * @returns {object} userWishlist
  */
-
 exports.addProductToWishlist = asyncHandler(async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.user._id, {
         $addToSet: { wishlist: req.body.productId },
@@ -48,9 +49,9 @@ exports.addProductToWishlist = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @access private
  * @returns {void} void
  */
-
 exports.removeProductFromWishlist = asyncHandler(async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.user._id, {
         $pull: { wishlist: req.params.productId },

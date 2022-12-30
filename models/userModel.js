@@ -5,7 +5,9 @@
  * @author AshrafDiab
  */
 
+// hashing and encrypt passwords
 const mongoose = require('mongoose');
+// hashing and encrypt passwords
 const bcrypt = require('bcryptjs')
 
 /* create user schema */
@@ -76,6 +78,7 @@ userSchema.post('save', (doc) => setImageUrl(doc));
 
 /* mongoose middleware to hash password on save */
 userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 12);
     next();
 });

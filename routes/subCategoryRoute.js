@@ -5,8 +5,10 @@
  * @author AshrafDiab
  */
 
+// nodejs web framework
 const express = require('express');
 
+// validation functions
 const {
     getSubCategoryValidator,
     createSubCategoryValidator,
@@ -14,6 +16,7 @@ const {
     deleteSubCategoryValidator,
 } = require('../utils/validator/subCategoryValidator');
 
+// CRUD methods and middlewares
 const {
     getSubCategories,
     getSubCategory,
@@ -24,6 +27,7 @@ const {
     setCategoryIdToParams,
 } = require('../controllers/subCategoryController');
 
+// authentication controller -> to authenticate and autherrizate some routes
 const autController = require('../controllers/authController');
 
 const router = express.Router({ mergeParams: true });

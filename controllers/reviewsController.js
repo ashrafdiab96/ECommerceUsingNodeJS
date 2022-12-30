@@ -5,7 +5,9 @@
  * @author AshrafDiab
  */
 
+// CRUD functions handler
 const factory = require('./handlersFactory');
+// review model
 const Review = require('../models/reviewsModel');
 
 /**
@@ -32,7 +34,7 @@ exports.createFilterObj = (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @return void
+ * @return {void} void
  */
 exports.setProductIdToParams = (req, res, next) => {
     if (!req.body.product) req.body.product = req.params.productId;
@@ -44,7 +46,9 @@ exports.setProductIdToParams = (req, res, next) => {
  * @desc get all reviews
  * @route GET /api/v1/reviews
  * @access public
- * @return array[objects]
+ * @param {Model} Review
+ * @param {string} ModelName
+ * @return {array[objects]} reviews
  */
 exports.getReviews = factory.getAll(Review, 'Review');
 
@@ -53,7 +57,8 @@ exports.getReviews = factory.getAll(Review, 'Review');
  * @desc get specific review by id
  * @route GET /api/v1/reviews/:id
  * @access public
- * @return object
+ * @param {Model} Review
+ * @return {object} review
  */
 exports.getReview = factory.getOne(Review);
 
@@ -62,7 +67,8 @@ exports.getReview = factory.getOne(Review);
  * @desc create new review
  * @route POST /api/v1/reviews
  * @access private
- * @return object
+ * @param {Model} Review
+ * @return {object} review
  */
 exports.createReview = factory.createOne(Review);
 
@@ -71,7 +77,8 @@ exports.createReview = factory.createOne(Review);
  * @desc update specific review by id
  * @route PUT /api/v1/reviews/:id
  * @access private
- * @return object
+ * @param {Model} Review
+ * @return {object} review
  */
 exports.updateReview = factory.updateOne(Review);
 
@@ -80,6 +87,7 @@ exports.updateReview = factory.updateOne(Review);
  * @desc delete specific review by id
  * @route DELETE /api/v1/reviews/:id
  * @access private
- * @return void
+ * @param {Model} Review
+ * @return {void} review
  */
 exports.deleteReview = factory.deleteOne(Review);

@@ -5,19 +5,23 @@
  * @author AshrafDiab
  */
 
+// nodejs web framework
 const express = require('express');
 
+// validation functions
 const {
     addProductToWishlistValidator,
     removeProductFromWishlistValidator,
 } = require('../utils/validator/wishlistValidator');
 
+// CRUD methods and middlewares
 const {
     getLoggedUserWishlist,
     addProductToWishlist,
     removeProductFromWishlist,
 } = require('../controllers/wishlistController');
 
+// authentication controller -> to authenticate and autherrizate some routes
 const authController = require('../controllers/authController');
 
 const router = express.Router();

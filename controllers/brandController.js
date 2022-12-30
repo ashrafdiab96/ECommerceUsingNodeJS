@@ -5,12 +5,18 @@
  * @author AshrafDiab
  */
 
+// nodejs image processing package
 const sharp = require('sharp');
+// express error handler for async functions (catch errors)
 const asyncHandler = require('express-async-handler');
+// create a strong unique random values
 const { v4: uuidv4 } = require('uuid');
 
+// CRUD functions handler
 const factory = require('./handlersFactory');
+// handle upload images
 const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
+// brand model
 const Brand = require('../models/brandModel');
 
 /**
@@ -26,25 +32,30 @@ exports.uploadBrandImage = uploadSingleImage('image');
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @returns {void} void
  */
 exports.resizeImge = asyncHandler(async (req, res, next) => {
-    const fileName = `brand-${uuidv4()}-${Date.now()}.jpeg`;
-    await sharp(req.file.buffer)
-        .resize(600, 600)
-        .toFormat('jpeg')
-        .jpeg({ quality: 95 })
-        .toFile(`uploads/brands/${fileName}`);
-    
-    req.body.image = fileName;
+    if (req.file) {
+        const fileName = `brand-${uuidv4()}-${Date.now()}.jpeg`;
+        await sharp(req.file.buffer)
+            .resize(600, 600)
+            .toFormat('jpeg')
+            .jpeg({ quality: 95 })
+            .toFile(`uploads/brands/${fileName}`);
+        
+        req.body.image = fileName;
+    }
     next();
 });
 
 /**
  * @method getBrands
- * @desc get all brans
+ * @desc get all brands
  * @route GET /api/v1/brands
  * @access public
- * @return array[objects]
+ * @param {Model} Brand
+ * @param {string} ModelName
+ * @return {array[objects]} brands
  */
 exports.getBrands = factory.getAll(Brand, 'Brand');
 
@@ -53,7 +64,8 @@ exports.getBrands = factory.getAll(Brand, 'Brand');
  * @desc get specific brand by id
  * @route GET /api/v1/brands/:id
  * @access public
- * @return object
+ * @param {Model} Brand
+ * @return {object} brand
  */
 exports.getBrand = factory.getOne(Brand);
 
@@ -62,7 +74,8 @@ exports.getBrand = factory.getOne(Brand);
  * @desc create new brand
  * @route POST /api/v1/brands
  * @access private
- * @return object
+ * @param {Model} Brand
+ * @return {object} brand
  */
 exports.createBrand = factory.createOne(Brand);
 
@@ -71,7 +84,8 @@ exports.createBrand = factory.createOne(Brand);
  * @desc update specific brand by id
  * @route PUT /api/v1/brands/:id
  * @access private
- * @return object
+ * @param {Model} Brand
+ * @return {object} brand
  */
 exports.updateBrand = factory.updateOne(Brand);
 
@@ -80,6 +94,7 @@ exports.updateBrand = factory.updateOne(Brand);
  * @desc delete specific brand by id
  * @route DELETE /api/v1/brands/:id
  * @access private
- * @return void
+ * @param {Model} Brand
+ * @return {void} void
  */
 exports.deleteBrand = factory.deleteOne(Brand);

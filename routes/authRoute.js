@@ -5,10 +5,16 @@
  * @author AshrafDiab
  */
 
+// nodejs web framework
 const express = require('express');
 
-const { signupValidator, loginValidator } = require('../utils/validator/authValidator');
+// validation functions
+const {
+    signupValidator,
+    loginValidator
+} = require('../utils/validator/authValidator');
 
+// CRUD methods and middlewares
 const {
     signup,
     login,
@@ -21,7 +27,13 @@ const {
 
 const router = express.Router();
 
-router.post('/signup', signupValidator, signup);
+router.post(
+    '/signup',
+    // signupValidator,
+    // uploadUserImage,
+    // resizeImge,
+    signup
+);
 router.post('/login', loginValidator, login);
 router.post('/forgetPassword', forgetPassword);
 router.post('/verifyResetdCode', verifyResetCode);

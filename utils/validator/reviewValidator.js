@@ -5,9 +5,12 @@
  * @author AshrafDiab
  */
 
+// package for validation
 const { check } = require('express-validator');
-const validatorMiddleware = require('../../middlewares/validatorMiddleware');
 
+// validation middleware return any validation error
+const validatorMiddleware = require('../../middlewares/validatorMiddleware');
+// review model
 const Review = require('../../models/reviewsModel');
 
 exports.getReviewValidator = [

@@ -5,8 +5,9 @@
  * @author AshrafDiab
  */
 
+// express error handler for async functions (catch errors)
 const asyncHandler = require('express-async-handler');
-
+// user model
 const User = require('../models/userModel');
 
 /**
@@ -16,9 +17,9 @@ const User = require('../models/userModel');
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @access private
  * @returns {array[object]} addresses
  */
-
 exports.getLoggedUserAddresses = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.user._id).populate('addresses');
     res.status(200).json({ result: user.addresses.length, data: user.addresses });
@@ -31,9 +32,9 @@ exports.getLoggedUserAddresses = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @access private
  * @returns {array[object]} addresses
  */
-
 exports.addAddressToUser = asyncHandler(async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.user._id, {
         $addToSet: { addresses: req.body },
@@ -48,9 +49,9 @@ exports.addAddressToUser = asyncHandler(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @access private
  * @returns {array[object]} addresses
  */
-
 exports.removeAddressFromUser = asyncHandler(async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.user._id, {
         $pull: { addresses: { _id: req.params.addressId } },
