@@ -5,8 +5,12 @@
  * @author AshrafDiab
  */
 
+// express error handler for async functions (catch errors)
 const asyncHandler = require('express-async-handler');
+
+// handle errors
 const ApiError = require('../utils/ApiError');
+// handle filtering features
 const ApiFeatures = require('../utils/ApiFeatures');
 
 /**
@@ -70,7 +74,6 @@ exports.getOne = (Model, populationOpt) => asyncHandler(async (req, res, next) =
  */
 exports.createOne = (Model) => asyncHandler(async (req, res) => {
     // create new document
-    console.log(req.body)
     const document = await Model.create(req.body);
     res.status(201).json({ data: document });
 });

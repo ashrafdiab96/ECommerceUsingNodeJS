@@ -28,7 +28,7 @@ const {
 } = require('../controllers/reviewsController');
 
 // authentication controller -> to authenticate and autherrizate some routes
-const autController = require('../controllers/authController');
+const authController = require('../controllers/authController');
 
 const router = express.Router({ mergeParams: true });
 
@@ -36,8 +36,8 @@ router
     .route('/')
     .get(createFilterObj, getReviews)
     .post(
-        autController.protect,
-        autController.allowedTo('user', 'admin'),
+        authController.protect,
+        authController.allowedTo('user', 'admin'),
         setProductIdToParams,
         createReviewValidator,
         createReview
@@ -47,14 +47,14 @@ router
     .route('/:id')
     .get(getReviewValidator, getReview)
     .put(
-        autController.protect,
-        autController.allowedTo('user', 'admin'),
+        authController.protect,
+        authController.allowedTo('user', 'admin'),
         updateReviewValidator,
         updateReview
     )
     .delete(
-        autController.protect,
-        autController.allowedTo('admin', 'manager', 'user'),
+        authController.protect,
+        authController.allowedTo('admin', 'manager', 'user'),
         deleteReviewValidator,
         deleteReview
     );

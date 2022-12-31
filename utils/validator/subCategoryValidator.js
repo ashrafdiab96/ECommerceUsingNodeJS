@@ -35,7 +35,6 @@ exports.createSubCategoryValidator = [
         })
         .custom(async (value) => {
             const subcategory = await SubCategory.findOne({ name: value });
-            console.log(subcategory);
             if (subcategory) {
                 return Promise.reject(
                     new Error(`Subcategory with name: ${value} already exists`, 400)
