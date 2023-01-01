@@ -31,6 +31,8 @@ const globalError = require('./middlewares/errorMiddleware');
 const dbConnection = require('./config/database');
 // file includes all routes
 const mountRoutes = require('./routes');
+// get webhockCheckout
+const { webhockCheckout } = require('./controllers/orderController');
 
 /**************************************************************
 *                     DATABASE CONNECTION                     *
@@ -49,6 +51,9 @@ app.options('*', cors());
 
 // compress all responses
 app.use(compression());
+
+// checkout webhock
+app.post('/webhock-checkout', express.raw({ type: 'application/json' }), webhockCheckout);
 
 /**************************************************************
 *                        MIDDELWARES                          *
