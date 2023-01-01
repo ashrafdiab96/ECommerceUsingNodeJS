@@ -208,6 +208,13 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     res.status(200).json({ session });
 });
 
+/**
+ * @method createCardOrder
+ * @desc create online payment oreder
+ * @access private
+ * @param {*} session
+ * @return {void} void
+ */
 const createCardOrder = async (session) => {
     const cartId = session.client_reference_id;
     const shippingAddress = session.metadata;
@@ -240,6 +247,16 @@ const createCardOrder = async (session) => {
     }
 };
 
+/**
+ * @method webhockCheckout
+ * @desc listen on webhock to check if payment operation is successed or not
+ * @route PUT /webhock-checkout
+ * @access private
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @return {json} received
+ */
 exports.webhockCheckout = asyncHandler(async (req, res, next) => {
     const sig = req.headers['stripe-signature'];
     let event;
