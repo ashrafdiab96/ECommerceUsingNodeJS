@@ -21,6 +21,8 @@ const Order = require('../models/orderModel');
 const Cart = require('../models/cartModel');
 // product model
 const Product = require('../models/productModel');
+// user model
+const User = require('../models/userModel');
 
 /**
  * @method createCashOrder
@@ -206,6 +208,38 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     res.status(200).json({ session });
 });
 
+const createCardOrder = async (session) => {
+    const cartId = session.client_reference_id;
+    const shippingAddress = session.metadata;
+    const orderPrice = session.amount_total / 100;
+    const customerEmail = session.customer_email;
+    const cart = await Cart.findById(cartId);
+    const user = await User.findOne({ email: customerEmail });
+    // create the order
+    const order = await Order.create({
+        user: user._id,
+        cartItems: cart.cartItems,
+        shippingAddress,
+        totalOrderPrice: orderPrice,
+        isPaid: true,
+        paidAt: Date.now(),
+        paymentMethodType: 'card',
+    });
+    // change product quantity and solt after order created
+    if (order) {
+        const bulkOption = cart.cartItems.map((item) => ({
+        updateOne: {
+            filter: { _id: item.product },
+            update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+        },
+        }));
+        await Product.bulkWrite(bulkOption, {});
+
+        // clear user cart
+        await Cart.findByIdAndDelete(cartId);
+    }
+};
+
 exports.webhockCheckout = asyncHandler(async (req, res, next) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -215,6 +249,8 @@ exports.webhockCheckout = asyncHandler(async (req, res, next) => {
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
     if (event.type == 'checkout.session.completed') {
-        console.log('create order here ......');
+        // create online payment order
+        createCardOrder(event.data.object);
     }
+    res.status(200).json({ received: true });
 });
