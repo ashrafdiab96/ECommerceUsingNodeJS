@@ -8,17 +8,28 @@
 /**************************************************************
 *                           IMPORTS                           *
 **************************************************************/
+// built in node js package for handling working with directories and files
 const path = require('path');
 
+// node js framework
 const express = require('express');
+// load environment variables from .env to process.env
 const dotenv = require('dotenv');
+// http request logger middleware
 const morgan = require('morgan');
+// enable CORS
+const cors = require('cors');
+// compress response bodies for all request that traverse through the middleware
+const compression = require('compression');
 
 dotenv.config({path: 'config.env'});
 
+// handle errors
 const ApiError = require('./utils/ApiError');
 const globalError = require('./middlewares/errorMiddleware');
+// handle databas connection
 const dbConnection = require('./config/database');
+// file includes all routes
 const mountRoutes = require('./routes');
 
 /**************************************************************
@@ -29,7 +40,15 @@ dbConnection();
 /**************************************************************
 *                        EXPRESS APP                          *
 **************************************************************/
+// express app
 const app = new express();
+
+// ebable other apps to access our app
+app.use(cors());
+app.options('*', cors());
+
+// compress all responses
+app.use(compression());
 
 /**************************************************************
 *                        MIDDELWARES                          *
