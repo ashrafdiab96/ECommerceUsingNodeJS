@@ -26,6 +26,8 @@ const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
 const sendEmail = require('../utils/sendEmail');
 // handle generate token
 const generateToken = require('../utils/generateToken');
+// sanitize data
+const { sanitizeSignedupUser } = require('../utils/sanitizeData');
 // handle errors
 const ApiError = require('../utils/ApiError');
 // user model
@@ -83,7 +85,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
 
     // generate token
     const token = generateToken(user._id);
-    res.status(201).json({ data: user, token });
+    res.status(201).json({ data: sanitizeSignedupUser(user), token });
 });
 // exports.signup = factory.createOne(User)
 

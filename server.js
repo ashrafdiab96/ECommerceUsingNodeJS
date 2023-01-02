@@ -21,6 +21,14 @@ const morgan = require('morgan');
 const cors = require('cors');
 // compress response bodies for all request that traverse through the middleware
 const compression = require('compression');
+// limit repeated requests to public APIs and/or endpoints such as password reset
+const rateLinit = require('express-rate-limit');
+// protect against HTTP Parameter Pollution attacks
+const hpp = require('hpp');
+// sanitizes user-supplied data to prevent MongoDB Operator Injection
+const mongoSanitize = require('express-mongo-sanitize');
+// sanitizes user-supplied data to prevent HTML tags
+const xss = require('xss-clean');
 
 dotenv.config({path: 'config.env'});
 
@@ -58,14 +66,44 @@ app.post('/webhock-checkout', express.raw({ type: 'application/json' }), webhock
 /**************************************************************
 *                        MIDDELWARES                          *
 **************************************************************/
+// convert data to json and limit reuqests
+app.use(express.json({ limit: '20kb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 app.use(express.static(path.join(__dirname, 'uploads')));
 
 if(process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
     console.log(`node: ${process.env.NODE_ENV}`);
 }
+
+/**************************************************************
+*                   APPLY DATA SANITIZATION                   *
+**************************************************************/
+app.use(mongoSanitize());
+app.use(xss());
+
+/**************************************************************
+*                   LIMIT REPEATED RQUESTS                    *
+**************************************************************/
+const limiter = rateLinit({
+    windowMs: 15 * 60 * 1000,   // 15 MIN
+    max: 100,
+    message: 'Too many requests, please try again after 15 minutes',
+});
+app.use('/api', limiter);
+
+/**************************************************************
+*               AGAINST HTTP PARAMETER POLLUTION              *
+**************************************************************/
+app.use(hpp({
+    whitelist: [
+        'price',
+        'sold',
+        'quantity',
+        'ratingsAverage',
+        'ratingsQuantity',
+    ]
+}));
 
 /**************************************************************
 *                           ROUTES                            *
@@ -90,7 +128,7 @@ const server = app.listen(PORT, () => {
 
 // Global error handeling outside express
 process.on('unhandledRejection', (error) => {
-    console.error(`unhandledRejection error: ${error.name} | ${error.message}`);
+    console.error(`unhandled rejection error: ${error.name} | ${error.message}`);
     server.close(() => {
         console.log('Shutting down...');
         process.exit(1);
