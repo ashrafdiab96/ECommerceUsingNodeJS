@@ -28,11 +28,11 @@ const {
 } = require('../controllers/orderController');
 
 // authentication controller -> to authenticate and autherrizate some routes
-const authController = require('../controllers/authController');
+// const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.use(authController.protect, authController.allowedTo('admin', 'user', 'manager'));
+// router.use(authController.protect, authController.allowedTo('admin', 'user', 'manager'));
 
 router
     .route('/checkout-session/:cartId')
@@ -52,10 +52,10 @@ router
 
 router
     .route('/:id/pay')
-    .put(authController.allowedTo('admin'), updateOrderPaidStatus);
+    // .put(authController.allowedTo('admin'), updateOrderPaidStatus);
 
 router
     .route('/:id/deliver')
-    .put(authController.allowedTo('admin'), updateOrderDeliverStatus);
+    // .put(authController.allowedTo('admin'), updateOrderDeliverStatus);
 
 module.exports = router;

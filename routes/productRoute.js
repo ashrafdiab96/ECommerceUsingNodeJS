@@ -31,7 +31,7 @@ const {
 const reviewsRoute = require("./reviewRoute");
 
 // authentication controller -> to authenticate and autherrizate some routes
-const authController = require('../controllers/authController');
+// const authController = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -42,8 +42,8 @@ router
     .route('/')
     .get(getProducts)
     .post(
-        authController.protect,
-        authController.allowedTo('admin', 'manager'),
+        // authController.protect,
+        // authController.allowedTo('admin', 'manager'),
         uploadProductImage,
         resizeProductImage,
         createProductValidator,
@@ -54,16 +54,16 @@ router
     .route('/:id')
     .get(getProductValidator, getProduct)
     .put(
-        authController.protect,
-        authController.allowedTo('admin', 'manager'),
+        // authController.protect,
+        // authController.allowedTo('admin', 'manager'),
         uploadProductImage,
         resizeProductImage,
         updateProductValidator,
         updateProduct
     )
     .delete(
-        authController.protect,
-        authController.allowedTo('admin'),
+        // authController.protect,
+        // authController.allowedTo('admin'),
         deleteProductValidator,
         deleteProduct
     );

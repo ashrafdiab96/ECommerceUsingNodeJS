@@ -28,7 +28,7 @@ const {
 } = require('../controllers/subCategoryController');
 
 // authentication controller -> to authenticate and autherrizate some routes
-const authController = require('../controllers/authController');
+// const authController = require('../controllers/authController');
 
 const router = express.Router({ mergeParams: true });
 
@@ -36,8 +36,8 @@ router
     .route('/')
     .get(createFilterObj, getSubCategories)
     .post(
-        authController.protect,
-        authController.allowedTo('admin', 'manager'),
+        // authController.protect,
+        // authController.allowedTo('admin', 'manager'),
         setCategoryIdToParams,
         createSubCategoryValidator,
         createSubCategory
@@ -47,14 +47,14 @@ router
     .route('/:id')
     .get(getSubCategoryValidator, getSubCategory)
     .put(
-        authController.protect,
-        authController.allowedTo('admin', 'manager'),
+        // authController.protect,
+        // authController.allowedTo('admin', 'manager'),
         updateSubCategoryValidator,
         updateSubCategory
     )
     .delete(
-        authController.protect,
-        authController.allowedTo('admin'),
+        // authController.protect,
+        // authController.allowedTo('admin'),
         deleteSubCategoryValidator,
         deleteSubCategory
     );

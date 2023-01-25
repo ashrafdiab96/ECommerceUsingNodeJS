@@ -22,11 +22,11 @@ const {
 } = require('../controllers/wishlistController');
 
 // authentication controller -> to authenticate and autherrizate some routes
-const authController = require('../controllers/authController');
+// const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.use(authController.protect, authController.allowedTo('user', 'admin'));
+// router.use(authController.protect, authController.allowedTo('user', 'admin'));
 
 router.route('/')
     .get(getLoggedUserWishlist)

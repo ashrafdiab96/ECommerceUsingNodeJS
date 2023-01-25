@@ -28,7 +28,7 @@ const {
 } = require('../controllers/brandController');
 
 // authentication controller -> to authenticate and autherrizate some routes
-const authController = require('../controllers/authController');
+// const authController = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -36,8 +36,8 @@ router
     .route('/')
     .get(getBrands)
     .post(
-        authController.protect,
-        authController.allowedTo('admin', 'manager'),
+        // authController.protect,
+        // authController.allowedTo('admin', 'manager'),
         uploadBrandImage,
         resizeImge,
         createBrandValidator,
@@ -48,16 +48,16 @@ router
     .route('/:id')
     .get(getBrandValidator, getBrand)
     .put(
-        authController.protect,
-        authController.allowedTo('admin', 'manager'),
+        // authController.protect,
+        // authController.allowedTo('admin', 'manager'),
         uploadBrandImage,
         resizeImge,
         updateBrandValidator,
         updateBrand
     )
     .delete(
-        authController.protect,
-        authController.allowedTo('admin'),
+        // authController.protect,
+        // authController.allowedTo('admin'),
         deleteBrandValidator,
         deleteBrand
     );

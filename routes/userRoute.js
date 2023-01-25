@@ -36,15 +36,15 @@ const {
 } = require('../controllers/userController');
 
 // authentication controller -> to authenticate and autherrizate some routes
-const authController = require('../controllers/authController');
+// const authController = require('../controllers/authController');
 
 const router = express.Router();
 
 // user routes 
-router.put('/activeMe', authController.protect, activateLoggedUser);
+// router.put('/activeMe', authController.protect, activateLoggedUser);
 
 // authentication middleware
-router.use(authController.protect, authController.checkActivation);
+// router.use(authController.protect, authController.checkActivation);
 router.get('/getMe', getLoggedUserData, getUser);
 router.put(
     '/updateMyPassword',
@@ -61,7 +61,7 @@ router.delete('/deleteMe', deactivateLoggedUser);
 
 // admin routes
 // autherization middleware
-router.use(authController.allowedTo('admin'));
+// router.use(authController.allowedTo('admin'));
 
 router.put('/changePassword/:id', changePasswordValidator, changeUserPassword);
 

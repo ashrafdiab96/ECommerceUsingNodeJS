@@ -21,11 +21,11 @@ const {
 } = require('../controllers/cartController');
 
 // authentication controller -> to authenticate and autherrizate some routes
-const authController = require('../controllers/authController');
+// const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.use(authController.protect, authController.allowedTo('admin', 'user', 'manager'));
+// router.use(authController.protect, authController.allowedTo('admin', 'user', 'manager'));
 
 router
     .route('/')
